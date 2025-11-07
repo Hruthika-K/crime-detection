@@ -16,6 +16,12 @@ import Link from 'next/link';
 import { format, formatDistanceToNow } from 'date-fns';
 
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
   SidebarProvider,
   Sidebar,
   SidebarHeader,
@@ -75,16 +81,20 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
   const [relativeTime, setRelativeTime] = useState('');
 
   useEffect(() => {
-    // This now runs only on the client, after hydration
-    const timer = setInterval(() => {
-      setRelativeTime(formatDistanceToNow(timestamp, { addSuffix: true }));
-    }, 60000); // Update every minute
+    const getFormattedRelativeTime = () => formatDistanceToNow(timestamp, { addSuffix: true });
 
-    // Set initial value
-    setRelativeTime(formatDistanceToNow(timestamp, { addSuffix: true }));
+    setRelativeTime(getFormattedRelativeTime());
+
+    const timer = setInterval(() => {
+      setRelativeTime(getFormattedRelativeTime());
+    }, 60000);
 
     return () => clearInterval(timer);
   }, [timestamp]);
+
+  if (!relativeTime) {
+    return null;
+  }
 
   return (
      <p suppressHydrationWarning title={format(timestamp, 'PPPpp')}>
@@ -94,7 +104,6 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
 }
 
 export function Dashboard() {
-  const [selectedAlertId, setSelectedAlertId] = useState<string | null>(dummyAlerts[0].id);
 
   const getCategoryIcon = (category: CrimeAlert['category'], size: string = 'h-4 w-4') => {
     const iconProps = { className: cn(size, 'shrink-0') };
@@ -206,34 +215,27 @@ export function Dashboard() {
                     </CardHeader>
                     <CardContent className="flex-1 p-0 overflow-hidden">
                         <ScrollArea className="h-full">
-                        <div className="flex flex-col gap-1 p-2 pt-0">
+                        <Accordion type="single" collapsible className="w-full p-2 pt-0">
                             {dummyAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((alert) => (
-                            <button
-                                key={alert.id}
-                                onClick={() => setSelectedAlertId(alert.id)}
-                                className={cn(
-                                'w-full text-left p-3 rounded-lg transition-colors',
-                                selectedAlertId === alert.id
-                                    ? 'bg-accent text-accent-foreground'
-                                    : 'hover:bg-muted/50'
-                                )}
-                            >
-                                <div className="flex items-start gap-3">
-                                <div className="mt-1">{getCategoryIcon(alert.category)}</div>
-                                <div className="flex-1">
-                                    <p className="font-semibold">{alert.title}</p>
-                                    <p className="text-sm text-muted-foreground">{alert.location}</p>
-                                    <div className="text-xs text-muted-foreground">
-                                    <RelativeTime timestamp={alert.timestamp} />
+                            <AccordionItem value={alert.id} key={alert.id}>
+                                <AccordionTrigger className="w-full text-left p-3 rounded-lg transition-colors hover:bg-muted/50 hover:no-underline">
+                                    <div className="flex items-start gap-3 w-full">
+                                    <div className="mt-1">{getCategoryIcon(alert.category)}</div>
+                                    <div className="flex-1 text-left">
+                                        <p className="font-semibold">{alert.title}</p>
+                                        <p className="text-sm text-muted-foreground">{alert.location}</p>
+                                        <div className="text-xs text-muted-foreground">
+                                            <RelativeTime timestamp={alert.timestamp} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className='text-xs text-muted-foreground'>
-                                    {getCategoryIcon(alert.category)}
-                                </div>
-                                </div>
-                            </button>
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-3 pl-12 text-sm text-muted-foreground">
+                                    {alert.description}
+                                </AccordionContent>
+                            </AccordionItem>
                             ))}
-                        </div>
+                        </Accordion>
                         </ScrollArea>
                     </CardContent>
                     </Card>
