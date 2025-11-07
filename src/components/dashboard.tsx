@@ -151,8 +151,8 @@ export function Dashboard() {
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <div className="flex h-full flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 px-4 lg:h-[60px] lg:px-6">
+          <div className="flex h-full max-h-screen flex-col">
+            <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 px-4 lg:h-[60px] lg:px-6">
               <SidebarTrigger />
               <div className="w-full flex-1">
                 <h1 className="text-lg font-semibold">Dashboard</h1>
@@ -176,15 +176,15 @@ export function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <main className="flex flex-1 flex-col gap-4 p-4 lg:flex-row lg:gap-6 lg:p-6">
+            <main className="flex flex-1 flex-col gap-4 overflow-hidden p-4 lg:flex-row lg:gap-6 lg:p-6">
               <div className="flex w-full flex-col lg:w-2/5 xl:w-1/3">
                 <Card className="flex-1 flex flex-col">
                   <CardHeader>
                     <CardTitle>Crime Alerts</CardTitle>
                     <CardDescription>Real-time incidents in your area.</CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-1 p-0">
-                    <ScrollArea className="h-full max-h-[calc(100vh-16rem)]">
+                  <CardContent className="flex-1 p-0 overflow-hidden">
+                    <ScrollArea className="h-full">
                       <div className="flex flex-col gap-1 p-2 pt-0">
                         {dummyAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((alert) => (
                           <button
