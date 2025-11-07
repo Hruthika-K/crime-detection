@@ -81,10 +81,12 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
   const [relativeTime, setRelativeTime] = useState('');
 
   useEffect(() => {
+    // This function will only run on the client side, after hydration
     const getFormattedRelativeTime = () => formatDistanceToNow(timestamp, { addSuffix: true });
-
+    
     setRelativeTime(getFormattedRelativeTime());
 
+    // Update time every minute
     const timer = setInterval(() => {
       setRelativeTime(getFormattedRelativeTime());
     }, 60000);
@@ -92,10 +94,12 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
     return () => clearInterval(timer);
   }, [timestamp]);
 
+  // Render a placeholder on the server and initial client render
   if (!relativeTime) {
     return null;
   }
 
+  // Render the actual relative time only on the client
   return (
      <p suppressHydrationWarning title={format(timestamp, 'PPPpp')}>
         {relativeTime}
@@ -216,9 +220,9 @@ export function Dashboard() {
                     <CardContent className="flex-1 p-0 overflow-hidden">
                         <ScrollArea className="h-full">
                         <Accordion type="single" collapsible className="w-full p-2 pt-0">
-                            {dummyAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((alert) => (
+                            {dummyAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((alert, index) => (
                             <AccordionItem value={alert.id} key={alert.id}>
-                                <AccordionTrigger className="w-full text-left p-3 rounded-lg transition-colors hover:bg-muted/50 hover:no-underline">
+                                <AccordionTrigger className={cn("w-full text-left p-3 rounded-lg transition-colors hover:bg-muted/50 hover:no-underline", index === 0 && "bg-primary/10")}>
                                     <div className="flex items-start gap-3 w-full">
                                     <div className="mt-1">{getCategoryIcon(alert.category)}</div>
                                     <div className="flex-1 text-left">
