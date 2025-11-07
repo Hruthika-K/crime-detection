@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ChevronLeft,
   Home,
@@ -70,6 +70,24 @@ function SidebarCollapseButton() {
             <ChevronLeft className="h-4 w-4 transition-transform duration-200 group-data-[state=collapsed]:rotate-180" />
         </SidebarMenuAction>
     );
+}
+
+function RelativeTime({ timestamp }: { timestamp: Date }) {
+  const [relativeTime, setRelativeTime] = useState('');
+
+  useEffect(() => {
+    setRelativeTime(formatDistanceToNow(timestamp, { addSuffix: true }));
+  }, [timestamp]);
+
+  if (!relativeTime) {
+    return null;
+  }
+
+  return (
+     <p title={format(timestamp, 'PPPpp')}>
+        {relativeTime}
+      </p>
+  );
 }
 
 export function Dashboard() {
@@ -176,10 +194,10 @@ export function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <main className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pb-4 lg:flex-row lg:gap-6 lg:px-6 lg:pb-6">
+            <main className="flex flex-1 flex-col gap-4 overflow-hidden lg:flex-row lg:gap-6">
               <div className="flex w-full flex-col lg:w-2/5 xl:w-1/3">
                 <Card className="flex-1 flex flex-col">
-                  <CardHeader>
+                  <CardHeader className="p-4">
                     <CardTitle>Crime Alerts</CardTitle>
                     <CardDescription>Real-time incidents in your area.</CardDescription>
                   </CardHeader>
@@ -202,9 +220,9 @@ export function Dashboard() {
                               <div className="flex-1">
                                 <p className="font-semibold">{alert.title}</p>
                                 <p className="text-sm text-muted-foreground">{alert.location}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {formatDistanceToNow(alert.timestamp, { addSuffix: true })}
-                                </p>
+                                <div className="text-xs text-muted-foreground">
+                                   <RelativeTime timestamp={alert.timestamp} />
+                                </div>
                               </div>
                             </div>
                           </button>
@@ -218,7 +236,7 @@ export function Dashboard() {
                 <Card className="h-full">
                   {selectedAlert ? (
                     <ScrollArea className="h-full">
-                      <CardHeader>
+                      <CardHeader className="p-4">
                         <div className="flex items-start justify-between gap-4">
                             <div>
                               <CardTitle className="text-2xl">{selectedAlert.title}</CardTitle>
@@ -227,7 +245,7 @@ export function Dashboard() {
                             {getCategoryIcon(selectedAlert.category, 'h-8 w-8')}
                         </div>
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-4 p-4 pt-0">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
                             <p className="font-medium text-muted-foreground">Category</p>
@@ -235,9 +253,9 @@ export function Dashboard() {
                           </div>
                           <div>
                             <p className="font-medium text-muted-foreground">Reported</p>
-                            <p title={format(selectedAlert.timestamp, 'PPPpp')}>
-                              {formatDistanceToNow(selectedAlert.timestamp, { addSuffix: true })}
-                            </p>
+                            <div className='text-sm'>
+                              <RelativeTime timestamp={selectedAlert.timestamp} />
+                            </div>
                           </div>
                         </div>
                         <Separator />
