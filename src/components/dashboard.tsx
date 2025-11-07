@@ -176,7 +176,7 @@ export function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <main className="flex flex-1 flex-col gap-4 overflow-hidden p-4 lg:flex-row lg:gap-6 lg:p-6">
+            <main className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pb-4 lg:flex-row lg:gap-6 lg:px-6 lg:pb-6">
               <div className="flex w-full flex-col lg:w-2/5 xl:w-1/3">
                 <Card className="flex-1 flex flex-col">
                   <CardHeader>
