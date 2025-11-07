@@ -176,8 +176,8 @@ export function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <main className="flex flex-1 flex-col gap-4 overflow-hidden p-4 pt-0 lg:flex-row lg:gap-6 lg:p-6 lg:pt-0">
-              <div className="flex w-full flex-col lg:w-2/5 xl:w-1/3 pt-4 lg:pt-6">
+            <main className="flex flex-1 flex-col gap-4 overflow-hidden p-4 lg:flex-row lg:gap-6 lg:p-6">
+              <div className="flex w-full flex-col lg:w-2/5 xl:w-1/3">
                 <Card className="flex-1 flex flex-col">
                   <CardHeader>
                     <CardTitle>Crime Alerts</CardTitle>
@@ -214,7 +214,7 @@ export function Dashboard() {
                   </CardContent>
                 </Card>
               </div>
-              <div className="flex-1 pt-4 lg:pt-6">
+              <div className="flex-1">
                 <Card className="h-full">
                   {selectedAlert ? (
                     <ScrollArea className="h-full">
