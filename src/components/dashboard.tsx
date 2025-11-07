@@ -46,7 +46,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import type { CrimeAlert } from '@/lib/dummy-data';
 import { dummyAlerts } from '@/lib/dummy-data';
@@ -76,22 +75,26 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
   const [relativeTime, setRelativeTime] = useState('');
 
   useEffect(() => {
+    // This now runs only on the client, after hydration
+    const timer = setInterval(() => {
+      setRelativeTime(formatDistanceToNow(timestamp, { addSuffix: true }));
+    }, 60000); // Update every minute
+
+    // Set initial value
     setRelativeTime(formatDistanceToNow(timestamp, { addSuffix: true }));
+
+    return () => clearInterval(timer);
   }, [timestamp]);
 
-  if (!relativeTime) {
-    return null;
-  }
-
   return (
-     <p title={format(timestamp, 'PPPpp')}>
+     <p suppressHydrationWarning title={format(timestamp, 'PPPpp')}>
         {relativeTime}
       </p>
   );
 }
 
 export function Dashboard() {
-  const [selectedAlert, setSelectedAlert] = useState<CrimeAlert | null>(dummyAlerts[0]);
+  const [selectedAlertId, setSelectedAlertId] = useState<string | null>(dummyAlerts[0].id);
 
   const getCategoryIcon = (category: CrimeAlert['category'], size: string = 'h-4 w-4') => {
     const iconProps = { className: cn(size, 'shrink-0') };
@@ -194,88 +197,47 @@ export function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <main className="flex flex-1 flex-col gap-4 overflow-hidden lg:flex-row lg:gap-6">
-              <div className="flex w-full flex-col lg:w-2/5 xl:w-1/3">
-                <Card className="flex-1 flex flex-col">
-                  <CardHeader className="p-4">
-                    <CardTitle>Crime Alerts</CardTitle>
-                    <CardDescription>Real-time incidents in your area.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1 p-0 overflow-hidden">
-                    <ScrollArea className="h-full">
-                      <div className="flex flex-col gap-1 p-2 pt-0">
-                        {dummyAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((alert) => (
-                          <button
-                            key={alert.id}
-                            onClick={() => setSelectedAlert(alert)}
-                            className={cn(
-                              'w-full text-left p-3 rounded-lg transition-colors',
-                              selectedAlert?.id === alert.id
-                                ? 'bg-accent text-accent-foreground'
-                                : 'hover:bg-muted/50'
-                            )}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="mt-1">{getCategoryIcon(alert.category)}</div>
-                              <div className="flex-1">
-                                <p className="font-semibold">{alert.title}</p>
-                                <p className="text-sm text-muted-foreground">{alert.location}</p>
-                                <div className="text-xs text-muted-foreground">
-                                   <RelativeTime timestamp={alert.timestamp} />
+            <main className="flex flex-1 flex-col overflow-hidden">
+                <div className="flex-1 p-4 lg:p-6">
+                    <Card className="h-full flex flex-col">
+                    <CardHeader>
+                        <CardTitle>Crime Alerts</CardTitle>
+                        <CardDescription>Real-time incidents in your area.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-1 p-0 overflow-hidden">
+                        <ScrollArea className="h-full">
+                        <div className="flex flex-col gap-1 p-2 pt-0">
+                            {dummyAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((alert) => (
+                            <button
+                                key={alert.id}
+                                onClick={() => setSelectedAlertId(alert.id)}
+                                className={cn(
+                                'w-full text-left p-3 rounded-lg transition-colors',
+                                selectedAlertId === alert.id
+                                    ? 'bg-accent text-accent-foreground'
+                                    : 'hover:bg-muted/50'
+                                )}
+                            >
+                                <div className="flex items-start gap-3">
+                                <div className="mt-1">{getCategoryIcon(alert.category)}</div>
+                                <div className="flex-1">
+                                    <p className="font-semibold">{alert.title}</p>
+                                    <p className="text-sm text-muted-foreground">{alert.location}</p>
+                                    <div className="text-xs text-muted-foreground">
+                                    <RelativeTime timestamp={alert.timestamp} />
+                                    </div>
                                 </div>
-                              </div>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="flex-1">
-                <Card className="h-full">
-                  {selectedAlert ? (
-                    <ScrollArea className="h-full">
-                      <CardHeader className="p-4">
-                        <div className="flex items-start justify-between gap-4">
-                            <div>
-                              <CardTitle className="text-2xl">{selectedAlert.title}</CardTitle>
-                              <CardDescription>{selectedAlert.location}</CardDescription>
-                            </div>
-                            {getCategoryIcon(selectedAlert.category, 'h-8 w-8')}
+                                <div className='text-xs text-muted-foreground'>
+                                    {getCategoryIcon(alert.category)}
+                                </div>
+                                </div>
+                            </button>
+                            ))}
                         </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4 p-4 pt-0">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p className="font-medium text-muted-foreground">Category</p>
-                            <p>{selectedAlert.category}</p>
-                          </div>
-                          <div>
-                            <p className="font-medium text-muted-foreground">Reported</p>
-                            <div className='text-sm'>
-                              <RelativeTime timestamp={selectedAlert.timestamp} />
-                            </div>
-                          </div>
-                        </div>
-                        <Separator />
-                        <div>
-                          <p className="font-medium text-muted-foreground">Description</p>
-                          <p className="mt-1">{selectedAlert.description}</p>
-                        </div>
-                      </CardContent>
-                    </ScrollArea>
-                  ) : (
-                    <div className="flex h-full flex-col items-center justify-center text-center p-6">
-                      <ShieldAlert className="h-16 w-16 text-muted-foreground/30" />
-                      <h3 className="mt-4 text-lg font-semibold">Select an Alert</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Choose an alert from the list to view its details.
-                      </p>
-                    </div>
-                  )}
-                </Card>
-              </div>
+                        </ScrollArea>
+                    </CardContent>
+                    </Card>
+                </div>
             </main>
           </div>
         </SidebarInset>
