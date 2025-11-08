@@ -9,7 +9,7 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
       className={cn("fill-current", props.className)}
       {...props}
     >
-      <g transform="translate(0, -5)">
+      <g>
         <path
           d="M50 5C25 20 10 40 10 55S25 90 50 95s40-15 40-40-15-35-40-50z"
           fill="#2C4E70"
@@ -19,9 +19,12 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
           fill="white"
         />
         <g transform="translate(30, 30) scale(0.4)">
-          <circle cx="50" cy="50" r="48" fill="#2C4E70" />
           <path
-            d="M50,2a48,48 0 1,0 0,96a48,48 0 1,0 0,-96M50,10a40,40 0 1,1 0,80a40,40 0 1,1 0,-80"
+            d="M50,2a48,48 0 1,0 0,96a48,48 0 1,0 0,-96"
+            fill="#2C4E70"
+          />
+          <path
+            d="M50,10a40,40 0 1,1 0,80a40,40 0 1,1 0,-80"
             fill="white"
           />
           <path
@@ -45,11 +48,11 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
         </g>
         <text
           x="50"
-          y="56"
+          y="58"
           fontFamily="Arial, sans-serif"
           fontSize="16"
           fontWeight="bold"
-          fill="white"
+          fill="#2C4E70"
           textAnchor="middle"
         >
           TC
