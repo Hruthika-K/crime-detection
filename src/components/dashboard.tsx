@@ -60,7 +60,7 @@ import { AppLogo } from '@/components/logo';
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 font-semibold text-sidebar-foreground">
-      <AppLogo className="h-8 w-8 text-primary" />
+      <AppLogo className="h-8 w-8" />
       <span className="group-data-[collapsible=icon]:hidden">Terra-Civitas</span>
     </Link>
   );
