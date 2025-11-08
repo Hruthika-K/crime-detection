@@ -81,12 +81,10 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
   const [relativeTime, setRelativeTime] = useState('');
 
   useEffect(() => {
-    // This function will only run on the client side, after hydration
     const getFormattedRelativeTime = () => formatDistanceToNow(timestamp, { addSuffix: true });
     
     setRelativeTime(getFormattedRelativeTime());
 
-    // Update time every minute
     const timer = setInterval(() => {
       setRelativeTime(getFormattedRelativeTime());
     }, 60000);
@@ -94,12 +92,11 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
     return () => clearInterval(timer);
   }, [timestamp]);
 
-  // Render a placeholder on the server and initial client render
   if (!relativeTime) {
-    return null;
+    // Return a placeholder or null on the server/initial render
+    return <p>&nbsp;</p>; // Using a non-breaking space to maintain layout
   }
 
-  // Render the actual relative time only on the client
   return (
      <p suppressHydrationWarning title={format(timestamp, 'PPPpp')}>
         {relativeTime}
@@ -227,7 +224,6 @@ export function Dashboard() {
                                     <div className="mt-1">{getCategoryIcon(alert.category)}</div>
                                     <div className="flex-1 text-left">
                                         <p className="font-semibold">{alert.title}</p>
-                                        <p className="text-sm text-muted-foreground">{alert.location}</p>
                                         <div className="text-xs text-muted-foreground">
                                             <RelativeTime timestamp={alert.timestamp} />
                                         </div>
