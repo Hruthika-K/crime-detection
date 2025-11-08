@@ -54,10 +54,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { CrimeAlert } from '@/lib/dummy-data';
 import { dummyAlerts } from '@/lib/dummy-data';
+import { AppLogo } from '@/components/logo';
 
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 font-semibold text-sidebar-foreground">
+      <AppLogo className="h-8 w-8" />
       <span className="group-data-[collapsible=icon]:hidden">Terra-Civitas</span>
     </Link>
   );
