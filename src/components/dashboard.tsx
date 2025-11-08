@@ -55,11 +55,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { CrimeAlert } from '@/lib/dummy-data';
 import { dummyAlerts } from '@/lib/dummy-data';
+import { AppLogo } from '@/components/logo';
 
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 font-semibold text-sidebar-foreground">
-      <Siren className="h-6 w-6 text-primary" />
+      <AppLogo className="h-8 w-8 text-primary" />
       <span className="group-data-[collapsible=icon]:hidden">Terra-Civitas</span>
     </Link>
   );
@@ -93,8 +94,7 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
   }, [timestamp]);
 
   if (!relativeTime) {
-    // Return a placeholder or null on the server/initial render
-    return <p>&nbsp;</p>; // Using a non-breaking space to maintain layout
+    return <p>&nbsp;</p>;
   }
 
   return (
