@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AppLogo } from '@/components/logo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,8 +20,7 @@ export default function LoginPage() {
        <Card className="w-full max-w-sm border-2">
         <CardHeader>
           <div className="flex flex-col items-center text-center">
-            <AppLogo className="mb-4 h-24 w-24" />
-            <CardTitle className="text-2xl font-bold">Terra-Civitas</CardTitle>
+            <CardTitle className="text-2xl font-bold mt-8 mb-4">Terra-Civitas</CardTitle>
             <CardDescription>Sign in to access crime alerts</CardDescription>
           </div>
         </CardHeader>
