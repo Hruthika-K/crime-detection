@@ -7,6 +7,7 @@ export type CrimeAlert = {
   description: string;
   latitude: number;
   longitude: number;
+  imageUrl?: string;
 };
 
 export const dummyAlerts: CrimeAlert[] = [

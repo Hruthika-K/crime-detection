@@ -10,9 +10,11 @@ import {
   Settings,
   Siren,
   User,
+  Image as ImageIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { format, formatDistanceToNow } from 'date-fns';
+import Image from 'next/image';
 
 import {
   Accordion,
@@ -53,8 +55,8 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { CrimeAlert } from '@/lib/dummy-data';
-import { dummyAlerts } from '@/lib/dummy-data';
 import { AppLogo } from '@/components/logo';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function Logo() {
   return (
@@ -66,7 +68,7 @@ function Logo() {
 }
 
 function SidebarCollapseButton() {
-    const { toggleSidebar, state } = useSidebar();
+    const { toggleSidebar } = useSidebar();
     return (
         <SidebarMenuAction
             onClick={toggleSidebar}
@@ -77,11 +79,12 @@ function SidebarCollapseButton() {
     );
 }
 
-function RelativeTime({ timestamp }: { timestamp: Date }) {
+function RelativeTime({ timestamp }: { timestamp: Date | string }) {
   const [relativeTime, setRelativeTime] = useState('');
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
 
   useEffect(() => {
-    const getFormattedRelativeTime = () => formatDistanceToNow(timestamp, { addSuffix: true });
+    const getFormattedRelativeTime = () => formatDistanceToNow(date, { addSuffix: true });
     
     setRelativeTime(getFormattedRelativeTime());
 
@@ -90,20 +93,43 @@ function RelativeTime({ timestamp }: { timestamp: Date }) {
     }, 60000);
 
     return () => clearInterval(timer);
-  }, [timestamp]);
+  }, [date]);
 
   if (!relativeTime) {
     return null;
   }
 
   return (
-     <p suppressHydrationWarning title={format(timestamp, 'PPPpp')}>
+     <p suppressHydrationWarning title={format(date, 'PPPpp')}>
         {relativeTime}
       </p>
   );
 }
 
 export function Dashboard() {
+  const [alerts, setAlerts] = useState<CrimeAlert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAlerts() {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/alerts');
+        if (!response.ok) {
+          throw new Error('Failed to fetch alerts');
+        }
+        const data = await response.json();
+        setAlerts(data);
+      } catch (error) {
+        console.error(error);
+        // Optionally, set an error state and display a message to the user
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchAlerts();
+  }, []);
 
   const getCategoryIcon = (category: CrimeAlert['category'], size: string = 'h-4 w-4') => {
     const iconProps = { className: cn(size, 'shrink-0') };
@@ -215,26 +241,39 @@ export function Dashboard() {
                     </CardHeader>
                     <CardContent className="flex-1 p-0 overflow-hidden">
                         <ScrollArea className="h-full">
-                        <Accordion type="single" collapsible className="w-full p-2 pt-0">
-                            {dummyAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((alert, index) => (
-                            <AccordionItem value={alert.id} key={alert.id}>
-                                <AccordionTrigger className={cn("w-full text-left p-3 rounded-lg transition-colors hover:bg-muted/50 hover:no-underline", index === 0 && "bg-primary/10")}>
-                                    <div className="flex items-start gap-3 w-full">
-                                    <div className="mt-1">{getCategoryIcon(alert.category)}</div>
-                                    <div className="flex-1 text-left">
-                                        <p className="font-semibold">{alert.title}</p>
-                                        <div className="text-xs text-muted-foreground">
-                                            <RelativeTime timestamp={alert.timestamp} />
+                         {isLoading ? (
+                            <div className="p-2 space-y-2">
+                              {[...Array(5)].map((_, i) => (
+                                <Skeleton key={i} className="h-20 w-full rounded-lg" />
+                              ))}
+                            </div>
+                          ) : (
+                            <Accordion type="single" collapsible className="w-full p-2 pt-0">
+                                {alerts.map((alert, index) => (
+                                <AccordionItem value={alert.id} key={alert.id}>
+                                    <AccordionTrigger className={cn("w-full text-left p-3 rounded-lg transition-colors hover:bg-muted/50 hover:no-underline", index === 0 && "bg-primary/10")}>
+                                        <div className="flex items-start gap-3 w-full">
+                                        <div className="mt-1">{getCategoryIcon(alert.category)}</div>
+                                        <div className="flex-1 text-left">
+                                            <p className="font-semibold">{alert.title}</p>
+                                            <div className="text-xs text-muted-foreground">
+                                                <RelativeTime timestamp={alert.timestamp} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    </div>
-                                </AccordionTrigger>
-                                <AccordionContent className="p-3 pl-12 text-sm text-muted-foreground">
-                                    {alert.description}
-                                </AccordionContent>
-                            </AccordionItem>
-                            ))}
-                        </Accordion>
+                                        {alert.imageUrl && (
+                                            <div className="relative h-12 w-12 rounded-md overflow-hidden shrink-0 ml-auto">
+                                                <Image src={alert.imageUrl} alt="Alert image" layout="fill" objectFit="cover" />
+                                            </div>
+                                        )}
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="p-3 pl-12 text-sm text-muted-foreground">
+                                        {alert.description}
+                                    </AccordionContent>
+                                </AccordionItem>
+                                ))}
+                            </Accordion>
+                         )}
                         </ScrollArea>
                     </CardContent>
                     </Card>
