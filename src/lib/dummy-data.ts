@@ -7,7 +7,7 @@ export type CrimeAlert = {
   description: string;
   latitude: number;
   longitude: number;
-  imageUrl?: string;
+  imageUrl: string;
 };
 
 export const dummyAlerts: CrimeAlert[] = [
@@ -20,6 +20,7 @@ export const dummyAlerts: CrimeAlert[] = [
     description: 'A resident reported seeing an individual looking into car windows for an extended period. The individual was wearing a grey hoodie and carrying a backpack. Police were notified and are patrolling the area.',
     latitude: 34.0522,
     longitude: -118.2437,
+    imageUrl: ''
   },
   {
     id: '2',
@@ -30,6 +31,7 @@ export const dummyAlerts: CrimeAlert[] = [
     description: 'A package was stolen from the front porch of a residence on Maple Drive. The incident was caught on a doorbell camera. The suspect is a male in his late 20s, wearing a blue jacket.',
     latitude: 34.0532,
     longitude: -118.2447,
+    imageUrl: ''
   },
   {
     id: '3',
@@ -40,6 +42,7 @@ export const dummyAlerts: CrimeAlert[] = [
     description: 'Graffiti was discovered on the park\'s main fountain and several benches. Park services have been contacted for cleanup. Anyone with information is asked to contact the police.',
     latitude: 34.0512,
     longitude: -118.2427,
+    imageUrl: ''
   },
   {
     id: '4',
@@ -50,6 +53,7 @@ export const dummyAlerts: CrimeAlert[] = [
     description: 'A car alarm was triggered in the downtown parking garage. Security found a smashed window, but it appears nothing was stolen from the vehicle. The owner has been notified.',
     latitude: 34.0542,
     longitude: -118.2457,
+    imageUrl: ''
   },
   {
     id: '5',
@@ -60,6 +64,7 @@ export const dummyAlerts: CrimeAlert[] = [
     description: 'An armed robbery occurred at the convenience store. The suspect fled with an undisclosed amount of cash. No injuries were reported. Police are investigating.',
     latitude: 34.0500,
     longitude: -118.2400,
+    imageUrl: ''
   },
   {
     id: '6',
@@ -70,5 +75,6 @@ export const dummyAlerts: CrimeAlert[] = [
     description: 'Loud music reported from an apartment unit after 11 PM. This is the third complaint this week from the same location. Authorities have been dispatched to address the situation.',
     latitude: 34.056,
     longitude: -118.249,
+    imageUrl: ''
   }
 ];
